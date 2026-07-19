@@ -1,0 +1,6 @@
+yt-dlp
+openai-whisper
+pydub
+pyttsx3
+deep-translator
+pytest

@@ -107,13 +107,13 @@ def translate_to_english(text: str) -> str:
 
 def synthesize_english_audio(text: str, output_path: Path) -> Path:
     try:
-        from pydub import AudioSegment
         import pyttsx3
     except ImportError as exc:  # pragma: no cover - runtime dependency path
-        raise RuntimeError("Install pyttsx3 and pydub to enable English speech synthesis") from exc
+        raise RuntimeError("Install pyttsx3 to enable English speech synthesis") from exc
+    import wave
 
     chunks = chunk_text_for_tts(text)
-    combined = AudioSegment.silent(duration=0)
+    temp_files = []
     for idx, chunk in enumerate(chunks):
         temp_path = output_path.parent / f"chunk_{idx}.wav"
         subprocess.run(
@@ -128,10 +128,21 @@ def synthesize_english_audio(text: str, output_path: Path) -> Path:
             capture_output=True,
             text=True,
         )
-        combined += AudioSegment.from_file(temp_path)
-        temp_path.unlink(missing_ok=True)
+        temp_files.append(temp_path)
 
-    combined.export(str(output_path), format="wav")
+    if not temp_files:
+        raise ValueError("No audio chunks generated")
+
+    with wave.open(str(temp_files[0]), 'rb') as w:
+        params = w.getparams()
+
+    with wave.open(str(output_path), 'wb') as output_wav:
+        output_wav.setparams(params)
+        for temp_file in temp_files:
+            with wave.open(str(temp_file), 'rb') as w:
+                output_wav.writeframes(w.readframes(w.getnframes()))
+            temp_file.unlink(missing_ok=True)
+
     return output_path
 
 

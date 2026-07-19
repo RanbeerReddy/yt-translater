@@ -1,7 +1,5 @@
 yt-dlp
 openai-whisper
-pydub
-pyaudioop
 pyttsx3
 deep-translator
 pytest

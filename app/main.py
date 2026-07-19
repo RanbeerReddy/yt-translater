@@ -62,7 +62,7 @@ def download_youtube_video(url: str, output_dir: Path) -> Path:
     source_path = downloaded_files[0]
     final_path = output_dir / f"{sanitize_output_name(title)}.mp4"
     if source_path != final_path:
-        source_path.rename(final_path)
+        source_path.replace(final_path)
     return final_path
 
 

@@ -91,7 +91,7 @@ def transcribe_audio(audio_path: Path) -> str:
         raise RuntimeError("Install openai-whisper to enable transcription") from exc
 
     model = whisper.load_model("tiny")
-    result = model.transcribe(str(audio_path), language="auto")
+    result = model.transcribe(str(audio_path))
     return result.get("text", "")
 
 

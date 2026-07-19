@@ -11,7 +11,6 @@ from pathlib import Path
 from typing import List
 
 import yt_dlp
-from pydub import AudioSegment
 
 
 def sanitize_output_name(value: str) -> str:
@@ -108,9 +107,10 @@ def translate_to_english(text: str) -> str:
 
 def synthesize_english_audio(text: str, output_path: Path) -> Path:
     try:
+        from pydub import AudioSegment
         import pyttsx3
     except ImportError as exc:  # pragma: no cover - runtime dependency path
-        raise RuntimeError("Install pyttsx3 to enable English speech synthesis") from exc
+        raise RuntimeError("Install pyttsx3 and pydub to enable English speech synthesis") from exc
 
     chunks = chunk_text_for_tts(text)
     combined = AudioSegment.silent(duration=0)
